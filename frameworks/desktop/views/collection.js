@@ -1802,6 +1802,74 @@ SC.CollectionView = SC.View.extend(
     return YES ;
   },
   
+  shouldScrollOnKeyDown: YES,
+  
+  keyCacheTimeOut: 1500,
+  
+  _keyCache: null,
+
+  clearKeyCache: function(){
+     //console.log('keyCache of ' + this._keyCache + ' cleared');
+     this._keyCache = null;
+     this._timer = null;
+  },
+  
+  _timer: null,
+
+  scrollOnInput: function(event){
+     console.log('keyDown on collection with char: ' + chr);
+     // responder for key events
+     var curKeyCache,txt,
+         content = this.get('content'),
+         charCode = event.charCode,
+         chr = String.fromCharCode(charCode),
+         curKeyCache = this.get('_keyCache'),
+         timeOut = this.get('keyCacheTimeOut'),
+         contentValueKey = this.get('contentValueKey'); 
+         
+     // catch space, because it should select if it is the first char
+     if(!curKeyCache && chr === ' ') return NO;
+         
+     if(content && event && contentValueKey && !event.altKey && !event.ctrlKey && !event.metaKey){
+        //console.log('keypressed keyCode: ' + keyCode + " and charCode: " + charCode);
+        if(!this._timer){
+           this._timer = SC.Timer.schedule({ 
+             target: this, action: 'clearKeyCache', interval: timeOut 
+           });           
+        }
+        
+        if(!curKeyCache) txt = chr;
+        else txt = curKeyCache += chr;   
+        this.set('_keyCache',txt); //update cache
+        // first reset the timer
+        this._timer.reset({target: this, action: 'clearKeyCache', interval: timeOut});
+        //now search
+        var numChars = txt.length;
+        var indexToSet = -1;
+        var len = content.get? content.get('length'): content.length;
+        var obj,val;
+        for(var idx=0;idx<len;idx++) {
+           obj = content.objectAt(idx);
+           val = obj.get? obj.get(contentValueKey): null;
+           if(val && (SC.typeOf(val) === SC.T_STRING)){
+              val = val.toLowerCase();
+              if(val.substr(0,numChars) === txt){
+                 indexToSet = idx;
+                 break;
+              }  
+           }
+        }
+        //console.log('Index found: ' + indexToSet);
+        if(indexToSet > -1){
+           // do scrolling
+           this.scrollToContentIndex(indexToSet);
+        }
+        return YES;
+     }        
+     return NO;
+  },
+  
+  
   // ..........................................................
   // SCROLLING
   // 
@@ -1836,7 +1904,12 @@ SC.CollectionView = SC.View.extend(
   
   /** @private */
   keyDown: function(evt) {
-    var ret = this.interpretKeyEvents(evt) ;
+    var ret;
+    if(this.get('shouldScrollOnKeyDown')){
+      ret = this.scrollOnInput(evt);
+      if(ret) return YES;
+    }
+    ret = this.interpretKeyEvents(evt) ;
     return !ret ? NO : ret ;
   },
   
