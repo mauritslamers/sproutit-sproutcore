@@ -229,7 +229,6 @@ SC.platform = {
     // documentMode logic from YUI to filter out IE8 Compat Mode which false positives
     return ('onhashchange' in window) && (document.documentMode === undefined || document.documentMode > 7);
   }()
-
 };
 
 /* Calculate CSS Prefixes */
