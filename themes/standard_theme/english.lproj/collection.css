@@ -53,7 +53,7 @@
   top: -2px;
   left: -4px;
   height: 8px;
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -32px -1630px;
+	background: sc_static('images/sc-theme-repeat-x.png') no-repeat -32px -1630px;
 }
 
 /* @end */
@@ -80,12 +80,12 @@
 }
 
 .sc-theme.focus .sc-list-view.sc-source-list .sc-collection-item.sel {
- 	background: transparent static_url('images/sc-theme-repeat-x.png') repeat-x 0px -16px;
+ 	background: transparent sc_static('images/sc-theme-repeat-x.png') repeat-x 0px -16px;
 	color: white ;
 	border-top: 1px solid #1f4f9b;
 	border-bottom: 1px solid #1f4f9b;
 	border-right: 0;
-	z-index: 1;
+	z-index: 0;
 }
 
 .sc-theme .sc-list-view.sc-source-list .sc-list-item-view label {

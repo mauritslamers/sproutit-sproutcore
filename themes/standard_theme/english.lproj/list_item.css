@@ -38,7 +38,7 @@
 	margin-top: -6px;
 	width: 14px;
 	height: 14px;
-	background-image: static_url('images/sc-theme-repeat-x.png') ;
+	background-image: sc_static('images/sc-theme-repeat-x.png') ;
 	background-position: -16px -1614px ;
 }
 
