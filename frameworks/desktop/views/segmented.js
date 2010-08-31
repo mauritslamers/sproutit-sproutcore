@@ -246,12 +246,56 @@ SC.SegmentedView = SC.View.extend(SC.Control,
     this.itemContentDidChange();
   }.observes('items'),
   
+  
   /** 
     Invoked whenever the item array or an item in the array is changed.  This method will reginerate the list of items.
   */
   itemContentDidChange: function() {
     this.set('renderLikeFirstTime', YES);
     this.notifyPropertyChange('displayItems');
+    
+    var me = this;
+    if(!this._observing) this._observing = [];
+    this._items.forEach(function(item) {
+       if(item.isObject){ 
+          // for some strange reason, not every item seems to be an object
+          // especially when tabview generates items
+          //console.log('item title: ' + item.title);
+          var observingIndex = this._observing.indexOf(item);
+          if(observingIndex === -1){
+             // not observing, add observer
+             item.addObserver('*', this, this.itemContentPropertyDidChange);
+             this._observing.push(item);
+          }          
+       }
+       // if !in observing - addObserver('*', _itemContentPropertyDidChange)
+    }, this);
+
+    this._observing.forEach(function(item) {
+        var itemsIndex = this._items.indexOf(item);
+        if(itemsIndex === -1){ // not in items anymore
+           item.removeObserver('.*',this, this.itemContentPropertyDidChange);
+           this._observing.removeObject(item);
+        }
+    }, this);
+    
+    // keep track of anything in _observing not in _items anymore and
+    // removeObserver()
+    
+    /*
+    var observing = this._observing, toRemove;
+    this._items.forEach(function(item) {
+       // if !in observing - addObserver('*', _itemContentPropertyDidChange)
+    }, this);
+    
+    // keep track of anything in _observing not in _items anymore and
+    // removeObserver()
+    */
+  },
+  
+  itemContentPropertyDidChange: function(){
+     //console.log('segmented object did change!');
+     this.itemContentDidChange(); 
   },
   
   init: function() {
