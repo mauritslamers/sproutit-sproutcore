@@ -429,12 +429,12 @@ SC.AudioView = SC.View.extend({
         dimensions;
     try{
       media.GetDuration();
+      media.GetTimeScale();
     }catch(e){
       console.log('loaded fail trying later');
       this.invokeLater(this.didAppendToDocument, 100);
       return;
     }
-    console.log('Duration is ' + media.GetDuration());
     this.set('audioObject', media);
     view.set('duration', media.GetDuration()/media.GetTimeScale());
     view.set('volume', media.GetVolume()/256);
