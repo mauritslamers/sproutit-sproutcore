@@ -539,7 +539,7 @@ SC.AudioView = SC.View.extend({
   seek:function(){
     var timeInSecs, totaltimeInSecs, formattedTime, media=this._getAudioObject();
     if(this.loaded==='html5'){
-      if(this.get('paused')) media.currentTime=this.get('currentTime');
+      if(this.get('paused') && media && media.currentTime) media.currentTime=this.get('currentTime');
     }
     if(this.loaded==='quicktime'){
       if(this.get('paused')) media.SetTime(this.get('currentTime')*media.GetTimeScale());
